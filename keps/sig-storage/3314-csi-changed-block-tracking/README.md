@@ -341,31 +341,31 @@ bogged down.
 
 #### Full snapshot backup
 
-As a system administrator, I want to perform full volume backups on Kubernetes
-so that I can easily backup and restore data from volumes.
+Backup application needs to perform full backup on volumes of a specific
+Kubernetes application.
+1. Backup application creates a VolumeSnapshot of the PVC that needs to be
+backed up.
+2. Backup application queries changed block tracking (CBT) service to identify
+all the allocated data blocks in the snapshot. For block devices, the CBT
+service returns the list of allocated blocks.
+3. Using the VolumeSnapshot as the source, the backup application creates a new
+PVC.
+4. Backup application uses the CBT metadata to identify the data that needs to
+be backed up.
 
 #### Incremental snapshot backup
 
-As a system administrator, I want to perform incremental volume backups on
-Kubernetes to efficiently backup and restore data from volumes while minimizing
-storage and network resources.
-
-#### Acceptance Criteria
-
-- The changed block tracking mechanism should provide efficient identification
-of changed data.
-- Backup applications should be able to utilize the changed block information
-to perform incremental backups, resulting in faster and more efficient backups.
-- Backup applications should have the ability to request changes between any
-two volume snapshots.
-- When base snapshots are used or no snapshot is available for comparison, the
-solution should provide information about all the data present on the volume.
-- The solution should provide all the necessary information securely to the
-requesting client.
-- It should be compatible with various storage providers used in Kubernetes
-environments.
-- The solution should be scalable to handle multiple requests for volume
-snapshots provisioned by different storage providers.
+Backup application needs to perform incremental backup on volumes of a specific
+Kubernetes application.
+1. Backup application creates a VolumeSnapshot of the PVC that needs to be
+backed up.
+2. Backup application queries changed block tracking service to identify the
+changes between two snapshots. For block devices, the CBT service returns the
+list of changed blocks.
+3. Using the VolumeSnapshot as the source, the backup application creates a new
+PVC.
+4. Backup application uses the CBT metadata to find the only changed data to
+backup.
 
 ### Notes/Constraints/Caveats
 
