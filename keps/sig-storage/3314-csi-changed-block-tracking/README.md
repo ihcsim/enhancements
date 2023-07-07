@@ -815,15 +815,208 @@ The following Kubernetes components are involved at runtime:
 ### Custom Resources
 
 @TODO Prasad to provide description and definitions of the CRs
+
 #### SnapshotSessionRequest
+
+```yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.11.1
+    api-approved.kubernetes.io: unapproved
+  creationTimestamp: null
+  name: snapshotsessionrequests.cbt.storage.k8s.io
+spec:
+  group: cbt.storage.k8s.io
+  names:
+    kind: SnapshotSessionRequest
+    listKind: SnapshotSessionRequestList
+    plural: snapshotsessionrequests
+    singular: snapshotsessionrequest
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: SnapshotSessionRequest is the Schema for the snapshotsessionrequests
+          API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: SnapshotSessionRequestSpec defines the desired state of
+              SnapshotSessionRequest
+            properties:
+              snapshots:
+                description: The list of VolumeSnapshot names to generate session for
+                items:
+                  type: string
+                type: array
+            type: object
+          status:
+            description: SnapshotSessionRequestStatus defines the observed state
+              of SnapshotSessionRequest
+            properties:
+              caCert:
+                description: CABundle contains a PEM-encoded CA (Certificate Authority) bundle. This CA bundle is used to enable TLS (Transport Layer Security) security for gRPC calls made to the snapshot session service.
+                format: byte
+                type: string
+              error:
+                description: Captures any error encountered
+                type: string
+              expiryTime:
+                description: ExpiryTime specifies the time for which the session is valid
+                format: date-time
+                type: string
+              sessionState:
+                description: State of the SnapshotSessionRequest. One of the "Ready",
+                  "Pending", "Failed"
+                type: string
+              sessionToken:
+                description: Opaque session token used for authentication in gRPC calls made to the snapshot session service.
+                format: byte
+                type: string
+              sessionURL:
+                description: Specifies the location of the snapshot session service for making gRPC calls. It should be provided in the format host:port, without specifying the scheme (e.g., http or https). The SessionURL is used in conjunction with the SessionToken to query Changed Block metadata by making gRPC calls to the service
+                type: string
+            required:
+            - sessionState
+            type: object
+        type: object
+    served: true
+    storage: true
+```
 
 #### SnapshotServiceConfiguration
 
-@TODO NOT NAMESPACED
+```yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.11.1
+    api-approved.kubernetes.io: unapproved
+  creationTimestamp: null
+  name: snapshotservicesconfigurations.cbt.storage.k8s.io
+spec:
+  group: cbt.storage.k8s.io
+  names:
+    kind: SnapshotServicesConfiguration
+    listKind: SnapshotServicesConfigurationList
+    plural: snapshotservicesconfigurations
+    singular: snapshotsessionservice
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: SnapshotServicesConfiguration is the Schema for the snapshotservicesconfigurations
+          API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: SnapshotServicesConfigurationSpec defines the desired state of
+              SnapshotServicesConfiguration
+            properties:
+              address:
+                description: Specifies the location of the snapshot session service for making gRPC calls. It should be provided in the format host:port, without specifying the scheme (e.g., http or https). The SessionURL is used to query Changed Block metadata by making gRPC calls to the service
+                type: string
+              caCert:
+                description: The CA certificate is used to enable TLS (Transport Layer Security) security for gRPC calls made to the snapshot session service.
+                format: byte
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+```
 
 #### SnapshotSessionData
 
 @TODO NEED TO DECIDE WHETHER TO EMBED SP IDs OR NOT
+
+```yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.11.1
+    api-approved.kubernetes.io: unapproved
+  creationTimestamp: null
+  name: snapshotsessiondata.cbt.storage.k8s.io
+spec:
+  group: cbt.storage.k8s.io
+  names:
+    kind: SnapshotSessionData
+    listKind: SnapshotSessionDataList
+    plural: snapshotsessiondata
+    singular: snapshotsessiondata
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: SnapshotSessionData is the Schema for the snapshotsessiondata
+          API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: SnapshotSessionDataSpec defines the desired state of SnapshotSessionData
+            properties:
+              expiryTime:
+                description: ExpiryTime specifies the time for which the session is valid
+                format: date-time
+                type: string
+              snapshotNamespace:
+                description: Namespace of the VolumeSnapshot for which the session is created
+                type: string
+              snapshots:
+                description: The list of VolumeSnapshot names for which the session is created
+                items:
+                  type: string
+                type: array
+            required:
+            - expiryTime
+            type: object
+        type: object
+    served: true
+    storage: true
+```
 
 ### The Snapshot Session Manager
 
