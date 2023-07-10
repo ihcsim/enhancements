@@ -814,18 +814,41 @@ The following Kubernetes components are involved at runtime:
 
 ### Custom Resources
 
-@TODO Prasad to provide description and definitions of the CRs
+The following Kubernetes Custom Resources are introduced
 
 #### SnapshotSessionRequest
+
+`SnapshotSessionRequest` is a namespace scoped Custom Resource (CR) used to
+request a session for a specific list of snapshots. Once the session is
+created, the session parameters are set in the `status` field of the CR.
+These session parameters are used to establish secure connection to the
+snapshot session service.
+
+The CR `spec` contains the following field:
+
+- `snapshots`: Represents the list of VolumeSnapshot names for which the
+  session is requested.
+
+And contains the following fields in the `status`:
+
+- `caCert`: Specifies (Certificate Authority) certificate used to enable
+  TLS (Transport Layer Security) security for gRPC calls made to the snapshot
+  session service.
+- `error`: Details of the errors if encountered while creating session.
+- `expiryTime`: Specifies the duration of validity for the session. It
+  represents the date and time when the session will expire.
+- `sessionState`: Represents state of the SnapshotSessionRequest. State is
+  defined with one of the "Ready", "Pending" and "Failed".
+- `sessionToken`: An opaque session token used for authentication in gRPC calls
+  made to the snapshot session service.
+- `sessionURL`: Specifies the location of the snapshot session service for
+  making gRPC calls in the format host:port, without the scheme (e.g., http or
+  https).
 
 ```yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: v0.11.1
-    api-approved.kubernetes.io: unapproved
-  creationTimestamp: null
   name: snapshotsessionrequests.cbt.storage.k8s.io
 spec:
   group: cbt.storage.k8s.io
@@ -864,12 +887,14 @@ spec:
                   type: string
                 type: array
             type: object
+            required:
+            - snapshots
           status:
             description: SnapshotSessionRequestStatus defines the observed state
               of SnapshotSessionRequest
             properties:
               caCert:
-                description: CABundle contains a PEM-encoded CA (Certificate Authority) bundle. This CA bundle is used to enable TLS (Transport Layer Security) security for gRPC calls made to the snapshot session service.
+                description: CACert contains a PEM-encoded CA (Certificate Authority) bundle. This CA bundle is used to enable TLS (Transport Layer Security) security for gRPC calls made to the snapshot session service.
                 format: byte
                 type: string
               error:
@@ -900,14 +925,24 @@ spec:
 
 #### SnapshotServiceConfiguration
 
+`SnapshotServiceConfiguration` is a cluster-scoped Custom Resource contains
+parameters used to create a session for a specific CSI driver. To associate
+the SnapshotServiceConfiguration with a specific CSI driver,
+`cbt.storage.k8s.io/driver: NAME_OF_THE_CSI_DRIVER` label is used.
+
+The CR `spec` contains the following fields:
+
+- `address`: Specifies the location of the snapshot session service for making
+  gRPC calls. It should be provided in the format host:port, without specifying
+  the scheme (e.g., http or https). The SessionURL is used to query Changed
+  Block metadata by making gRPC calls to the service.
+- `caCert`: Specifies the CA certificate is used to enable TLS (Transport Layer
+  Security) security for gRPC calls made to the snapshot session service.
+
 ```yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: v0.11.1
-    api-approved.kubernetes.io: unapproved
-  creationTimestamp: null
   name: snapshotservicesconfigurations.cbt.storage.k8s.io
 spec:
   group: cbt.storage.k8s.io
@@ -948,25 +983,36 @@ spec:
                 format: byte
                 type: string
             type: object
+            required:
+              - address
+              - caCert
         type: object
     served: true
     storage: true
-    subresources:
-      status: {}
 ```
 
 #### SnapshotSessionData
 
 @TODO NEED TO DECIDE WHETHER TO EMBED SP IDs OR NOT
 
+`SnapshotSessionData` CR is a namespaced resource created within the namespace
+of the CSI driver. The name of the resource represents session token itself.
+The CR provides a structured way to manage session tokens and their
+associations with specific VolumeSnapshots.
+
+The CR `spec` contains the following fields:
+
+- `expiryTime`: Specifies the duration of validity for the session token. It
+  represents the date and time when the session token will expire.
+- `snapshotNamespace`: Indicates the namespace of the VolumeSnapshots
+  associated with the session token.
+- `snapshots`: Represents a list of VolumeSnapshot names for which the session
+  token is valid.
+
 ```yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: v0.11.1
-    api-approved.kubernetes.io: unapproved
-  creationTimestamp: null
   name: snapshotsessiondata.cbt.storage.k8s.io
 spec:
   group: cbt.storage.k8s.io
@@ -1012,6 +1058,7 @@ spec:
                 type: array
             required:
             - expiryTime
+            - snapshots
             type: object
         type: object
     served: true
