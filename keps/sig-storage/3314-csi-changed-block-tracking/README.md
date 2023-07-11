@@ -829,7 +829,7 @@ The CR `spec` contains the following field:
 - `snapshots`: Represents the list of VolumeSnapshot names for which the
   session is requested.
 
-And contains the following fields in the `status`:
+The CR `status` contains the following fields:
 
 - `caCert`: Specifies (Certificate Authority) certificate used to enable
   TLS (Transport Layer Security) security for gRPC calls made to the snapshot
@@ -882,7 +882,7 @@ spec:
               SnapshotSessionRequest
             properties:
               snapshots:
-                description: The list of VolumeSnapshot names to generate session for
+                description: The list of VolumeSnapshots that can be used in the session
                 items:
                   type: string
                 type: array
@@ -913,7 +913,7 @@ spec:
                 format: byte
                 type: string
               sessionURL:
-                description: Specifies the location of the snapshot session service for making gRPC calls. It should be provided in the format host:port, without specifying the scheme (e.g., http or https). The SessionURL is used in conjunction with the SessionToken to query Changed Block metadata by making gRPC calls to the service
+                description: Specifies the location of the snapshot session service for making TLS gRPC calls. It should be provided in the format host:port, without specifying the scheme (e.g., http or https). The SessionURL is used in conjunction with the SessionToken to query Changed Block metadata by making TLS gRPC calls to the service
                 type: string
             required:
             - sessionState
@@ -932,10 +932,10 @@ the SnapshotServiceConfiguration with a specific CSI driver,
 
 The CR `spec` contains the following fields:
 
-- `address`: Specifies the location of the snapshot session service for making
-  gRPC calls. It should be provided in the format host:port, without specifying
-  the scheme (e.g., http or https). The SessionURL is used to query Changed
-  Block metadata by making gRPC calls to the service.
+- `address`: Specifies the IP address or DNS name of the snapshot session
+  service for making gRPC calls. It should be provided in the format host:port,
+  without specifying the scheme (e.g., http or https). The SessionURL is used
+  to query Changed Block metadata by making gRPC calls to the service.
 - `caCert`: Specifies the CA certificate is used to enable TLS (Transport Layer
   Security) security for gRPC calls made to the snapshot session service.
 
@@ -976,10 +976,10 @@ spec:
               SnapshotServicesConfiguration
             properties:
               address:
-                description: Specifies the location of the snapshot session service for making gRPC calls. It should be provided in the format host:port, without specifying the scheme (e.g., http or https). The SessionURL is used to query Changed Block metadata by making gRPC calls to the service
+                description: Specifies the location of the snapshot session service for making TLS gRPC calls. It should be provided in the format host:port, without specifying the scheme (e.g., http or https). The SessionURL is used to query Changed Block metadata by making TLS gRPC calls to the service
                 type: string
               caCert:
-                description: The CA certificate is used to enable TLS (Transport Layer Security) security for gRPC calls made to the snapshot session service.
+                description: CACert contains a PEM-encoded CA (Certificate Authority) bundle. This CA bundle is used to enable TLS (Transport Layer Security) security for gRPC calls made to the snapshot session service.
                 format: byte
                 type: string
             type: object
@@ -991,9 +991,7 @@ spec:
     storage: true
 ```
 
-#### SnapshotSessionData
-
-@TODO NEED TO DECIDE WHETHER TO EMBED SP IDs OR NOT
+#### SnapshotSessionData 
 
 `SnapshotSessionData` CR is a namespaced resource created within the namespace
 of the CSI driver. The name of the resource represents session token itself.
@@ -1058,6 +1056,7 @@ spec:
                 type: array
             required:
             - expiryTime
+            - snapshotNamespace
             - snapshots
             type: object
         type: object
