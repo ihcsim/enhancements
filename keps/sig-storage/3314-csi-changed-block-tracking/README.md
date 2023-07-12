@@ -930,7 +930,6 @@ spec:
 parameters used to create a session for a specific CSI driver. To associate
 the SnapshotServiceConfiguration with a specific CSI driver,
 `cbt.storage.k8s.io/driver: NAME_OF_THE_CSI_DRIVER` label is used.
-`SnapshotServiceConfiguration`  
 
 The CR `spec` contains the following fields:
 
