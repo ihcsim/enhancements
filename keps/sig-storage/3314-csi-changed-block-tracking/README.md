@@ -913,8 +913,7 @@ spec:
                 format: byte
                 type: string
               sessionURL:
-                description: Specifies the IP address or DNS name of the snapshot session
-                service for making TLS gRPC calls. It should be provided in the format host:port, without specifying the scheme (e.g., http or https). The SessionURL is used in conjunction with the SessionToken to query Changed Block metadata by making TLS gRPC calls to the service
+                description: Specifies the IP address or DNS name of the snapshot session service for making TLS gRPC calls. It should be provided in the format host:port, without specifying the scheme (e.g., http or https). The SessionURL is used in conjunction with the SessionToken to query Changed Block metadata by making TLS gRPC calls to the service
                 type: string
             required:
             - sessionState
