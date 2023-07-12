@@ -913,7 +913,8 @@ spec:
                 format: byte
                 type: string
               sessionURL:
-                description: Specifies the location of the snapshot session service for making TLS gRPC calls. It should be provided in the format host:port, without specifying the scheme (e.g., http or https). The SessionURL is used in conjunction with the SessionToken to query Changed Block metadata by making TLS gRPC calls to the service
+                description: Specifies the IP address or DNS name of the snapshot session
+                service for making TLS gRPC calls. It should be provided in the format host:port, without specifying the scheme (e.g., http or https). The SessionURL is used in conjunction with the SessionToken to query Changed Block metadata by making TLS gRPC calls to the service
                 type: string
             required:
             - sessionState
@@ -929,6 +930,7 @@ spec:
 parameters used to create a session for a specific CSI driver. To associate
 the SnapshotServiceConfiguration with a specific CSI driver,
 `cbt.storage.k8s.io/driver: NAME_OF_THE_CSI_DRIVER` label is used.
+`SnapshotServiceConfiguration`  
 
 The CR `spec` contains the following fields:
 
@@ -976,7 +978,7 @@ spec:
               SnapshotServicesConfiguration
             properties:
               address:
-                description: Specifies the location of the snapshot session service for making TLS gRPC calls. It should be provided in the format host:port, without specifying the scheme (e.g., http or https). The SessionURL is used to query Changed Block metadata by making TLS gRPC calls to the service
+                description: Specifies the IP address or DNS name of the snapshot session service for making TLS gRPC calls. It should be provided in the format host:port, without specifying the scheme (e.g., http or https). The SessionURL is used to query Changed Block metadata by making TLS gRPC calls to the service
                 type: string
               caCert:
                 description: CACert contains a PEM-encoded CA (Certificate Authority) bundle. This CA bundle is used to enable TLS (Transport Layer Security) security for gRPC calls made to the snapshot session service.
